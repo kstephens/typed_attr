@@ -38,29 +38,29 @@ describe TypedAttr do
 
     [ Old, New ].each do | cls |
       context "#{cls} syntax" do
-    it "should handle ()" do
-      obj = cls.new
-      obj.a.should == nil
-      obj.b.should == nil
-    end
+        it "should handle ()" do
+          obj = cls.new
+          obj.a.should == nil
+          obj.b.should == nil
+        end
 
-    it "should handle (String)" do
-      obj = cls.new("String")
-      obj.a.should == "String"
-      obj.b.should == nil
-    end
+        it "should handle (String)" do
+          obj = cls.new("String")
+          obj.a.should == "String"
+          obj.b.should == nil
+        end
 
-    it "should handle (String, Fixnum)" do
-      obj = cls.new("String", 123)
-      obj.a.should == "String"
-      obj.b.should == 123
-    end
+        it "should handle (String, Fixnum)" do
+          obj = cls.new("String", 123)
+          obj.a.should == "String"
+          obj.b.should == 123
+        end
 
-    it "should handle (String, Fixnum, ANYTHING)" do
-      obj = cls.new("String", 123, Object.new)
-      obj.a.should == "String"
-      obj.b.should == 123
-    end
+        it "should handle (String, Fixnum, ANYTHING)" do
+          obj = cls.new("String", 123, Object.new)
+          obj.a.should == "String"
+          obj.b.should == 123
+        end
       end
     end
   end
