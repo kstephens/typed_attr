@@ -41,6 +41,8 @@ Methods can use "typecheck" to perform checks on arguments:
       typecheck y, String
       y * x
     end
+    m(-1, "string") # => raise TypeError
+    m(2, "string")  # => "stringstring"
 
 Composite Types can be constructed to match deeper data structures:
 

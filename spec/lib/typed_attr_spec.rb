@@ -1,123 +1,62 @@
 require 'spec_helper'
 require 'typed_attr'
 
-describe Class::CompositeType do
-  context "Numericlike" do
-    let(:numeric_like) do
+describe TypedAttr do
+  context "typecheck" do
+    it "should not raise if it does match" do
+      typecheck "1234", String
+    end
+
+    it "should raise TypeError if it does not match" do
+      expect do
+        typecheck 1234, String
+      end.to raise_error(TypeError)
+    end
+
+    it "should handle multiple checks" do
+      expect do
+        typecheck 1234, Integer, Positive
+      end.to_not raise_error
+
+      expect do
+        typecheck 1234, Integer, Negative
+      end.to raise_error(TypeError)
+
+      expect do
+        typecheck 1234, String, Positive
+      end.to raise_error(TypeError)
+    end
+  end
+
+  context "typed_attr" do
+    let(:cls) do
       Class.new do
-        def to_numeric; -1234; end
+        typed_attr String, :a, Numeric, :b
       end
     end
 
-    it "should be true for Numeric" do
-      v = 1234
-      x = Numericlike === v
-      x.should == v
+    it "should handle ()" do
+      obj = cls.new
+      obj.a.should == nil
+      obj.b.should == nil
     end
 
-    it "should be true for anything that responds to :to_numeric" do
-      v = numeric_like.new
-      x = Numericlike === v
-      x.should == -1234
+    it "should handle (String)" do
+      obj = cls.new("String")
+      obj.a.should == "String"
+      obj.b.should == nil
     end
 
-    it "should be false for non-Numeric" do
-      v = "a String"
-      v.respond_to?(:to_numeric).should be_false
-      (Numericlike === v).should be_false
+    it "should handle (String, Fixnum)" do
+      obj = cls.new("String", 123)
+      obj.a.should == "String"
+      obj.b.should == 123
+    end
+
+    it "should handle (String, Fixnum, ANYTHING)" do
+      obj = cls.new("String", 123, Object.new)
+      obj.a.should == "String"
+      obj.b.should == 123
     end
   end
-
-  context "ContainerType" do
-    it "should not fail when empty" do
-      typecheck [ ], Array.of(String)
-    end
-    it "should not fail with a matching element" do
-      typecheck [ "String" ], Array.of(String)
-    end
-    it "should fail when contains unmatching element" do
-      expect do
-        typecheck [ "String", 1234 ], Array.of(String)
-      end.to raise_error
-    end
-    it "should not fail when is not an Enumerable" do
-      expect do
-        typecheck 1234, Array.of(String)
-      end.to raise_error
-    end
-    it "should not fail when is not equvalent" do
-      expect do
-        typecheck [ ], Hash.of(String)
-      end.to raise_error
-    end
-  end
-
-  context "PairType" do
-    it "should not fail when empty" do
-      v = { }
-      typecheck v, Hash.of(String.with(Integer))
-    end
-
-    it "should not fail" do
-      v = { "foo" => 1 }
-      typecheck v, Hash.of(String.with(Integer))
-    end
-
-    it "should fail" do
-      v = { "foo" => :symbol }
-      (Hash.of(String.with(Integer)) === v).should == false
-    end
-
-    it "should fail" do
-      v = { :symbol => 2 }
-      (Hash.of(String.with(Integer)) === v).should == false
-    end
-  end
-
-  context "AlternateType" do
-    it "should not fail when empty" do
-      v = [ ]
-      (Array.of(String|Integer) === v).should === true
-    end
-
-    it "should not fail" do
-      v = [ "String", 1234 ]
-      (Array.of(String|Integer) === v).should === true
-    end
-
-    it "should fail" do
-      v = [ "String", 1234, :symbol ]
-      (Array.of(String|Integer) === v).should === false
-    end
-  end
-
-  context "Positive" do
-    it "should be true for Numeric" do
-      v = 1234
-      (Positive === v).should == true
-    end
-
-    it "should be false for negative" do
-      v = -1234
-      (Positive === v).should be_false
-    end
-
-    it "should be false for non-Numeric" do
-      v = "a String"
-      (Positive === v).should be_false
-    end
-  end
-
-  context "misc" do
-    it "example 1" do
-      h = { "a" => 1, "b" => :symbol }
-      typecheck h, Hash.of(String.with(Integer|Symbol))
-    end
-
-    it "example 2" do
-      h = { "a" => 1, "b" => "string" }
-      (Hash.of(String.with(Integer|Symbol)) === h).should == false
-    end
-  end
-
 end
