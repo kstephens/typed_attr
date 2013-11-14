@@ -21,9 +21,9 @@ Or install it yourself as:
 TypedAttr simplifies typed functional programming in Ruby.
 
 The creation of data types is critical to functional programming.
-Ruby does not enforce any typing of attributes or parameters.
+Ruby does not enforce any typing of object attributes or method parameters.
 
-We introduce a class macro "typed_attr".  It constructs an #initialize method
+TypedAttr introduces a class macro "typed_attr".  It constructs an #initialize method
 given a list of attributes and their expected types.
 
 Example:
@@ -44,10 +44,20 @@ Methods can use "typecheck" to perform checks on arguments:
     m(-1, "string") # => raise TypeError
     m(2, "string")  # => "stringstring"
 
+The type assertions use the #=== matching operator.
+
 Composite Types can be constructed to match deeper data structures:
 
     h = { "a" => 1, "b" => :symbol }
     typecheck h, Hash.of(String.with(Integer|Symbol))
+
+Composite types create dynamic Modules that redefine the #=== pattern matching operator.
+Thus composite types can be used in "case when" clauses:
+
+    case h
+    when Hash.of(String.with(Users))  ...
+    when Hash.of(Symbol.with(Object)) ...
+    end
 
 ## Contributing
 

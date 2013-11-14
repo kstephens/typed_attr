@@ -29,15 +29,15 @@ describe TypedAttr do
   end
 
   context "typed_attr" do
-    Old = Class.new do
+    HashSyntax = Class.new do
       typed_attr String, :a, Numeric, :b
     end
-    New = Class.new do
+    ArraySyntax = Class.new do
       typed_attr a: String, b: Numeric
     end
 
-    [ Old, New ].each do | cls |
-      context "#{cls} syntax" do
+    [ HashSyntax, ArraySyntax ].each do | cls |
+      context "#{cls}" do
         it "should handle ()" do
           obj = cls.new
           obj.a.should == nil
