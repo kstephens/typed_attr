@@ -1,6 +1,6 @@
 # TypedAttr
 
-TODO: Write a gem description
+Typed Attributes and Composite Types for Functional Programming in Ruby
 
 ## Installation
 
