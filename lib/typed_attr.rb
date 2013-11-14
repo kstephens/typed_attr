@@ -21,7 +21,7 @@ require 'typed_attr/enumerable' # map_with_index
 
     module ModuleMethods
       OPTIONS = { }
-      def typed_attrs_option opts
+      def typed_attr_option opts
         OPTIONS.update(opts)
       end
 
