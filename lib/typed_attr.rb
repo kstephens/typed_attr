@@ -1,5 +1,4 @@
 require 'typed_attr/version'
-require 'typed_attr/enumerable' # map_with_index
 
   # Typed Attributes.
   module TypedAttr
@@ -49,11 +48,11 @@ def initialize *__args
 end
 
 def initialize_typed_attrs *__args
-  #{names.map_with_index do | name, i |
+  #{names.map.with_index do | name, i |
     "@#{name} = __args[#{i}] if __args.size > #{i}"
   end * "\n  "}
   #{"binding.pry if #{OPTIONS[:pry_if] || true}" if OPTIONS[:pry]}
-  #{names.map_with_index do | name, i |
+  #{names.map.with_index do | name, i |
     type = name_to_type[name]
     "typecheck @#{name}, #{type} if __args.size > #{i}"
   end * "\n  "}
