@@ -118,6 +118,11 @@ describe Class::CompositeType do
       h = { "a" => 1, "b" => "string" }
       (Hash.of(String.with(Integer|Symbol)) === h).should == false
     end
+
+    it "should handle to_s" do
+      Hash.of(String.with(Integer|Symbol)).to_s.should == "Hash.of(String.with(Integer|Symbol))"
+    end
+
   end
 
 end
