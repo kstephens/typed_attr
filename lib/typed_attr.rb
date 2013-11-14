@@ -62,11 +62,6 @@ END
         $stderr.puts "#{self}\n#{expr}" if OPTIONS[:debug]
         class_eval expr
       end
-
-      def attrs *args, &blk
-        $stderr.puts "  deprecated #{caller[0..2]}"
-        typed_attr *args, &blk
-      end
     end
   end
 
