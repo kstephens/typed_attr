@@ -29,12 +29,15 @@ describe TypedAttr do
   end
 
   context "typed_attr" do
-    let(:cls) do
-      Class.new do
-        typed_attr String, :a, Numeric, :b
-      end
+    Old = Class.new do
+      typed_attr String, :a, Numeric, :b
+    end
+    New = Class.new do
+      typed_attr a: String, b: Numeric
     end
 
+    [ Old, New ].each do | cls |
+      context "#{cls} syntax" do
     it "should handle ()" do
       obj = cls.new
       obj.a.should == nil
@@ -57,6 +60,8 @@ describe TypedAttr do
       obj = cls.new("String", 123, Object.new)
       obj.a.should == "String"
       obj.b.should == 123
+    end
+      end
     end
   end
 end
