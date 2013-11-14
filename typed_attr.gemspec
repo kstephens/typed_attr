@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = TypedAttr::VERSION
   spec.authors       = ["Kurt Stephens"]
   spec.email         = ["ks.github@kurtstephens.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
+  spec.description   = %q{Typed Attributes and Composite Types for Functional Programming in Ruby}
+  spec.summary       = %q{typed_attr name: String, ...}
+  spec.homepage      = "https://github.com/kstephens/typed_attr"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
