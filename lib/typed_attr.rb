@@ -1,3 +1,4 @@
+require 'typed_attr/version'
 require 'typed_attr/enumerable' # map_with_index
 
   # Typed Attributes.
