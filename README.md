@@ -2,20 +2,6 @@
 
 Typed Attributes and Composite Types for Functional Programming in Ruby
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'typed_attr'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install typed_attr
-
 ## Usage
 
 TypedAttr simplifies typed functional programming in Ruby.
@@ -33,8 +19,9 @@ Example:
       typed_attr name: String, amount: Money
     end
     Account.new("Foo", Money.new(1234))
+    Account.new("Foo", 1234) # => raise TypeError
 
-Methods can use "typecheck" to perform checks on arguments:
+Methods can use "typecheck" to perform checks on other values:
 
     def m x, y
       typecheck x, Positive, Integer
@@ -59,7 +46,33 @@ Thus composite types can be used in "case when" clauses:
     when Hash.of(Symbol.with(Object)) ...
     end
 
+Logical operators: #|, #&, #~ are supported:
+
+    a = [ 1, 2, 3 ]
+    typecheck a, Array.of(Positive & Numeric)
+    typecheck a, Array.of(~ NilClass)
+    
+    b = [ 1, -2, 3 ]
+    typecheck b, Array.of(Positive & Numeric) # => raise TypeError
+    
+    c = [ 1, nil, 3 ]
+    typecheck c, Array.of(~ NilClass)         # => raise TypeError
+
 Composite types are cached indefinitely, therefore anonymous Modules cannot be composed.
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'typed_attr'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install typed_attr
 
 ## Contributing
 
