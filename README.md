@@ -59,7 +59,7 @@ Thus composite types can be used in "case when" clauses:
     when Hash.of(Symbol.with(Object)) ...
     end
 
-Composite types are cached indefinitely, therefore anonymous Modules cannot composed.
+Composite types are cached indefinitely, therefore anonymous Modules cannot be composed.
 
 ## Contributing
 
