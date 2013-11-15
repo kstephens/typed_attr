@@ -73,7 +73,7 @@ class Module
 
   class NegativeType < CompositeType
     def === x
-       ! @a === x
+       ! (@a === x)
     end
     def to_s
       @to_s ||= "(~#{@a})".freeze

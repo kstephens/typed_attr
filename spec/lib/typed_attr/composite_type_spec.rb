@@ -130,6 +130,23 @@ describe Class::CompositeType do
     end
   end
 
+  context "NegativeType" do
+    it "~~A == A" do
+      a = Class.new
+      (~ ~ a).should == a
+    end
+
+    it "should be true for match" do
+      v = [ 1, :symbol ]
+      (Array.of(~NilClass) === v).should === true
+    end
+
+    it "should be false for match" do
+      v = [ 1, nil, :symbol ]
+      (Array.of(~NilClass) === v).should === false
+    end
+  end
+
   context "Negative" do
     it "should be true for negative Numeric" do
       v = -1234
