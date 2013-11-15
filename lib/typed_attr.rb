@@ -14,7 +14,7 @@ module TypedAttr
   # Returns value.
   def typecheck value, *checks
     unless checks.all? { | check | check === value }
-      raise TypeError, "expected (#{checks * ', '}), given #{value}"
+      raise TypeError, "expected (#{checks * ', '}), given #{value.class} (#{value})"
     end
     value
   end
