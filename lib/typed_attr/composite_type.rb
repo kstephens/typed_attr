@@ -1,5 +1,9 @@
 class Module
   class CompositeType < self
+    CACHE = { }
+    def self.new_cached a, b = nil
+      CACHE[[ self, a, b ]] ||= new(a, b)
+    end
     def initialize a, b = nil
       @a = a
       @b = b
@@ -21,7 +25,7 @@ class Module
   #
   # Array.of(String)
   def of t
-    ContainerType.new(self, t)
+    ContainerType.new_cached(self, t)
   end
 
   class PairType < CompositeType
@@ -37,7 +41,7 @@ class Module
   #
   # Hash.of(String.with(Integer))
   def with t
-    PairType.new(self, t)
+    PairType.new_cached(self, t)
   end
 
   class DisjunctiveType < CompositeType
@@ -53,7 +57,7 @@ class Module
   #
   # Array.of(String|Integer)
   def | t
-    DisjunctiveType.new(self, t)
+    DisjunctiveType.new_cached(self, t)
   end
 
   class ConjunctiveType < CompositeType
@@ -69,7 +73,7 @@ class Module
   #
   # Array.of(Positive&Integer)
   def & t
-    ConjunctiveType.new(self, t)
+    ConjunctiveType.new_cached(self, t)
   end
 
   class NegativeType < CompositeType
@@ -89,7 +93,7 @@ class Module
     when NegativeType
       self._a
     else
-      NegativeType.new(self)
+      NegativeType.new_cached(self)
     end
   end
 end

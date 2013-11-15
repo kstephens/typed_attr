@@ -2,6 +2,12 @@ require 'spec_helper'
 require 'typed_attr'
 
 describe Class::CompositeType do
+  it "should cache instances" do
+    t1 = Array.of(String.with(~Float|Symbol&Hash))
+    t2 = Array.of(String.with(~Float|Symbol&Hash))
+    t1.object_id.should == t2.object_id
+  end
+
   context "Numericlike" do
     let(:numeric_like) do
       Class.new do
