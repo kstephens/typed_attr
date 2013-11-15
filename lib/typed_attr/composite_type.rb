@@ -1,23 +1,21 @@
 class Module
   class CompositeType < self
     CACHE = { }
-    def self.new_cached a, b = nil
-      CACHE[[ self, a, b ]] ||= new(a, b)
+    def self.new_cached *args
+      CACHE[[ self, args ]] ||= new(*args)
     end
-    def initialize a, b = nil
-      @a = a
-      @b = b
+    def initialize *t
+      @_t = t
     end
-    def _a; @a; end
-    def _b; @b; end
+    attr_reader :_t
   end
 
   class ContainerType < CompositeType
     def === x
-      @a === x and x.all?{|e| @b === e }
+      @_t[0] === x and x.all?{|e| @_t[1] === e }
     end
     def to_s
-      @to_s ||= "#{@a}.of(#{@b})".freeze
+      @to_s ||= "#{@_t[0]}.of(#{@_t[1]})".freeze
     end
   end
 
@@ -30,10 +28,10 @@ class Module
 
   class PairType < CompositeType
     def === x
-      Enumerable === x and @a === x[0] and @b === x[1]
+      Enumerable === x and @_t[0] === x[0] and @_t[1] === x[1]
     end
     def to_s
-      @to_s ||= "#{@a}.with(#{@b})".freeze
+      @to_s ||= "#{@_t[0]}.with(#{@_t[1]})".freeze
     end
   end
 
@@ -46,10 +44,10 @@ class Module
 
   class DisjunctiveType < CompositeType
     def === x
-       @a === x or @b === x
+       @_t[0] === x or @_t[1] === x
     end
     def to_s
-      @to_s ||= "(#{@a}|#{@b})".freeze
+      @to_s ||= "(#{@_t[0]}|#{@_t[1]})".freeze
     end
   end
 
@@ -62,10 +60,10 @@ class Module
 
   class ConjunctiveType < CompositeType
     def === x
-       @a === x and @b === x
+       @_t[0] === x and @_t[1] === x
     end
     def to_s
-      @to_s ||= "(#{@a}&#{@b})".freeze
+      @to_s ||= "(#{@_t[0]}&#{@_t[1]})".freeze
     end
   end
 
@@ -78,10 +76,10 @@ class Module
 
   class NegativeType < CompositeType
     def === x
-       ! (@a === x)
+       ! (@_t[0] === x)
     end
     def to_s
-      @to_s ||= "(~#{@a})".freeze
+      @to_s ||= "(~#{@_t[0]})".freeze
     end
   end
 
@@ -91,7 +89,7 @@ class Module
   def ~@
     case self
     when NegativeType
-      self._a
+      self._t.first
     else
       NegativeType.new_cached(self)
     end
