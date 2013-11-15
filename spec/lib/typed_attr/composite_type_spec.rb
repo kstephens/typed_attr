@@ -81,6 +81,17 @@ describe Class::CompositeType do
   end
 
   context "DisjunctiveType" do
+    it "should reduce to the greater type if A or B are subclasses of each other" do
+      (Float   | Numeric).should == Numeric
+      (Numeric | Float  ).should == Numeric
+      (Numeric | Numeric).should == Numeric
+    end
+
+    it "should not reduce if A and B are disjunctive" do
+      (Numericlike | Numeric).to_s.should == "(Numericlike|Numeric)"
+      (String | Array).to_s.should == "(String|Array)"
+    end
+
     it "should not fail when empty" do
       v = [ ]
       (Array.of(String|Integer) === v).should === true

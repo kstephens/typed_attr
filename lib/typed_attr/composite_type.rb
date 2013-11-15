@@ -55,7 +55,14 @@ class Module
   #
   # Array.of(String|Integer)
   def | t
-    DisjunctiveType.new_cached(self, t)
+    case
+    when t <= self
+      self
+    when self <= t
+      t
+    else
+      DisjunctiveType.new_cached(self, t)
+    end
   end
 
   class ConjunctiveType < CompositeType
