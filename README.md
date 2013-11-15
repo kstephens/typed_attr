@@ -38,6 +38,15 @@ Composite Types can be constructed to match deeper data structures:
     h = { "a" => 1, "b" => :symbol }
     typecheck h, Hash.of(String.with(Integer|Symbol))
 
+Defining types through Modules:
+
+    module Even
+      def self.==== x
+         Integer === x and x.even?
+      end
+    end
+    Array.of(Even) === [ 2, 4, 10 ]
+
 Composite types create dynamic Modules that redefine the #=== pattern matching operator.
 Thus composite types can be used in "case when" clauses:
 

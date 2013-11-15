@@ -23,27 +23,33 @@ class Module
     end
   end
 
-  # Constructs a type of Enumeration of an element type.
+  # Constructs a type of Enumeration with an element type.
   #
   # Array.of(String)
   def of t
     ContainerType.new_cached(self, t)
   end
 
-  class PairType < CompositeType
+  class EnumeratedType < CompositeType
     def === x
-      Enumerable === x and @_t[0] === x[0] and @_t[1] === x[1]
+      Enumerable === x and
+        @_t.size == x.size and
+        begin
+          i = -1
+          @_t.all?{|t| t === x[i += 1]}
+        end
     end
     def to_s
-      @to_s ||= "#{@_t[0]}.with(#{@_t[1]})".freeze
+      @to_s ||= "#{@_t[0]}.with(#{@_t[1..-1] * ','})".freeze
     end
   end
 
-  # Constructs a type of Pairs.
+  # Constructs a type of Enumerable elements.
   #
+  # String.with(Integer, Float) === [ "foo", 1, 1.2 ]
   # Hash.of(String.with(Integer))
-  def with t
-    PairType.new_cached(self, t)
+  def with *types
+    EnumeratedType.new_cached(self, *types)
   end
 
   class DisjunctiveType < CompositeType
