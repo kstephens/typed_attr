@@ -1,13 +1,17 @@
 class Module
   class CompositeType < self
+    class Error < ::StandardError; end
+
     CACHE = { }
-    def self.new_cached *args
-      CACHE[[ self, args ]] ||= new(*args)
+    def self.new_cached *types
+      CACHE[[ self, types ]] ||= new(types)
     end
-    def initialize *t
-      @_t = t
+    def initialize types
+      raise Error, "cannot create CompositeType from unamed object" unless types.all?{|x| x.name}
+      @_t = types
     end
     attr_reader :_t
+    def name; to_s; end
   end
 
   class ContainerType < CompositeType

@@ -8,6 +8,12 @@ describe Class::CompositeType do
     t1.object_id.should == t2.object_id
   end
 
+  it "should fail for anonymous Modules" do
+    expect {
+      Module.new & String
+    }.to raise_error(Module::CompositeType::Error, "cannot create CompositeType from unamed object")
+  end
+
   context "Numericlike" do
     let(:numeric_like) do
       Class.new do
@@ -149,8 +155,8 @@ describe Class::CompositeType do
 
   context "NegativeType" do
     it "~~A == A" do
-      a = Class.new
-      (~ ~ a).should == a
+      t = String
+      (~ ~ t).should == t
     end
 
     it "should be true for match" do

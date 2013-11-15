@@ -20,7 +20,7 @@ Or install it yourself as:
 
 TypedAttr simplifies typed functional programming in Ruby.
 
-The creation of data types is critical to functional programming.
+The creation of data types is central to functional programming.
 Ruby does not enforce any typing of object attributes or method parameters.
 
 TypedAttr introduces a class macro "typed_attr".  It constructs an #initialize method
@@ -58,6 +58,8 @@ Thus composite types can be used in "case when" clauses:
     when Hash.of(String.with(Users))  ...
     when Hash.of(Symbol.with(Object)) ...
     end
+
+Composite types are cached indefinitely, therefore anonymous Modules cannot composed.
 
 ## Contributing
 
