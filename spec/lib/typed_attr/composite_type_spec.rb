@@ -74,7 +74,7 @@ describe Class::CompositeType do
     end
   end
 
-  context "AlternateType" do
+  context "DisjunctiveType" do
     it "should not fail when empty" do
       v = [ ]
       (Array.of(String|Integer) === v).should === true
@@ -88,6 +88,28 @@ describe Class::CompositeType do
     it "should fail" do
       v = [ "String", 1234, :symbol ]
       (Array.of(String|Integer) === v).should === false
+    end
+  end
+
+  context "ConjunctiveType" do
+    it "should not fail when empty" do
+      v = [ ]
+      (Array.of(Positive & Integer) === v).should === true
+    end
+
+    it "should not fail" do
+      v = [ 1, 2 ]
+      (Array.of(Positive & Integer) === v).should === true
+    end
+
+    it "should fail" do
+      v = [ 0, 1 ]
+      (Array.of(Positive & Integer) === v).should === false
+    end
+
+    it "should fail" do
+      v = [ 1, :symbol ]
+      (Array.of(Positive & Integer) === v).should === false
     end
   end
 
@@ -137,7 +159,7 @@ describe Class::CompositeType do
     end
 
     it "should handle to_s" do
-      Hash.of(String.with(Integer|Symbol)).to_s.should == "Hash.of(String.with(Integer|Symbol))"
+      Hash.of(String.with(Integer|Symbol)).to_s.should == "Hash.of(String.with((Integer|Symbol)))"
     end
 
   end

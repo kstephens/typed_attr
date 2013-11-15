@@ -1,9 +1,11 @@
 class Module
   class CompositeType < self
-    def initialize a, b
+    def initialize a, b = nil
       @a = a
       @b = b
     end
+    def _a; @a; end
+    def _b; @b; end
     def to_s
       @to_s ||= "#{@a}.#{op}(#{@b})".freeze
     end
@@ -37,20 +39,57 @@ class Module
     PairType.new(self, t)
   end
 
-  class AlternateType < CompositeType
+  class DisjunctiveType < CompositeType
     def === x
        @a === x or @b === x
     end
     def to_s
-      @to_s ||= "#{@a}|#{@b}".freeze
+      @to_s ||= "(#{@a}|#{@b})".freeze
     end
   end
 
-  # Constructs a type of Pairs.
+  # Constructs a type which can be A OR B.
   #
   # Array.of(String|Integer)
   def | t
-    AlternateType.new(self, t)
+    DisjunctiveType.new(self, t)
+  end
+
+  class ConjunctiveType < CompositeType
+    def === x
+       @a === x and @b === x
+    end
+    def to_s
+      @to_s ||= "(#{@a}&#{@b})".freeze
+    end
+  end
+
+  # Constructs a type which must be A AND B.
+  #
+  # Array.of(Positive&Integer)
+  def & t
+    ConjunctiveType.new(self, t)
+  end
+
+  class NegativeType < CompositeType
+    def === x
+       ! @a === x
+    end
+    def to_s
+      @to_s ||= "(~#{@a})".freeze
+    end
+  end
+
+  # Constructs a type which must not be A.
+  #
+  # Array.of(~NilClass)
+  def ~@
+    case self
+    when NegativeType
+      self.a
+    else
+      NegativeType.new(self)
+    end
   end
 end
 
