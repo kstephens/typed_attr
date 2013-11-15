@@ -21,15 +21,15 @@ Example:
     Account.new("Foo", Money.new(1234))
     Account.new("Foo", 1234) # => raise TypeError
 
-Methods can use "typecheck" to perform checks on other values:
+Use "typecheck" to perform checks on values:
 
     def m x, y
-      typecheck x, Positive, Integer
-      typecheck y, String
-      y * x
+      typecheck x, String
+      typecheck y, Positive, Integer
+      x * y
     end
-    m(-1, "string") # => raise TypeError
-    m(2, "string")  # => "stringstring"
+    m("string", -1) # => raise TypeError
+    m("string", 2)  # => "stringstring"
 
 The type assertions use the #=== matching operator.
 
