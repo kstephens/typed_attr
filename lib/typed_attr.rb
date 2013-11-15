@@ -37,11 +37,11 @@ module TypedAttr
         names = h.keys
         name_to_type = h
       else
-      name_to_type = Hash[*types_and_names.reverse]
-      names =
-        (0 .. types_and_names.size).to_a.
-        keep_if(&:odd?).
-        map { | i | types_and_names[i] }
+        name_to_type = Hash[*types_and_names.reverse]
+        names =
+          (0 .. types_and_names.size).to_a.
+          keep_if(&:odd?).
+          map { | i | types_and_names[i] }
       end
       expr = <<"END"
 def initialize *__args
