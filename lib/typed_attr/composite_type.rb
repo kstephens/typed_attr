@@ -6,16 +6,15 @@ class Module
     end
     def _a; @a; end
     def _b; @b; end
-    def to_s
-      @to_s ||= "#{@a}.#{op}(#{@b})".freeze
-    end
   end
 
   class ContainerType < CompositeType
     def === x
       @a === x and x.all?{|e| @b === e }
     end
-    def op; 'of'; end
+    def to_s
+      @to_s ||= "#{@a}.of(#{@b})".freeze
+    end
   end
 
   # Constructs a type of Enumeration of an element type.
@@ -29,7 +28,9 @@ class Module
     def === x
       Enumerable === x and @a === x[0] and @b === x[1]
     end
-    def op; 'with'; end
+    def to_s
+      @to_s ||= "#{@a}.with(#{@b})".freeze
+    end
   end
 
   # Constructs a type of Pairs.
@@ -86,14 +87,16 @@ class Module
   def ~@
     case self
     when NegativeType
-      self.a
+      self._a
     else
       NegativeType.new(self)
     end
   end
 end
 
+# Numeric origin/continuum types.
 
+# Objects that are Numeric or respond to :to_numeric.
 module Numericlike
   def self.=== x
     case
@@ -105,18 +108,36 @@ module Numericlike
   end
 end
 
+# Objects that are Numericlike and > 0.
 module Positive
   def self.=== x
     n = Numericlike === x and n > 0
   end
 end
 
+# Objects that are Numericlike and < 0.
 module Negative
   def self.=== x
     n = Numericlike === x and n < 0
   end
 end
 
+# Objects that are Numericlike and <= 0.
+module NonPositive
+  def self.=== x
+    n = Numericlike === x and n <= 0
+  end
+end
+
+# Objects that are Numericlike and >= 0.
+module NonNegative
+  def self.=== x
+    n = Numericlike === x and n >= 0
+  end
+end
+
+# Objects that can do IO.
+#
 # Note: IO and StringIO do not share a common ancestor Module
 # that distingushes them as being capable of "IO".
 # So we create one here -- devdriven.com 2013/11/14
