@@ -108,6 +108,23 @@ describe Class::CompositeType do
     end
   end
 
+  context "Negative" do
+    it "should be true for negative Numeric" do
+      v = -1234
+      (Negative === v).should == true
+    end
+
+    it "should be false for positive" do
+      v = 1234
+      (Negative === v).should be_false
+    end
+
+    it "should be false for non-Numeric" do
+      v = "a String"
+      (Negative === v).should be_false
+    end
+  end
+
   context "misc" do
     it "example 1" do
       h = { "a" => 1, "b" => :symbol }

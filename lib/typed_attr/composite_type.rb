@@ -74,7 +74,7 @@ end
 
 module Negative
   def self.=== x
-    n = Numericlike == x and n < 0
+    n = Numericlike === x and n < 0
   end
 end
 
