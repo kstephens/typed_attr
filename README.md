@@ -41,7 +41,7 @@ Composite Types can be constructed to match deeper data structures:
 Defining types through Modules:
 
     module Even
-      def self.==== x
+      def self.=== x
          Integer === x and x.even?
       end
     end
