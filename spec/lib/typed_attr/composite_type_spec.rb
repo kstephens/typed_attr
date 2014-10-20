@@ -36,8 +36,8 @@ describe Class::CompositeType do
 
     it "should be false for non-Numeric" do
       v = "a String"
-      v.respond_to?(:to_numeric).should be_false
-      (subject === v).should be_false
+      v.respond_to?(:to_numeric).should be_falsey
+      (subject === v).should be_falsey
     end
   end
 
@@ -47,13 +47,13 @@ describe Class::CompositeType do
       (subject === [ 1, :symbol, "string" ]).should == true
     end
     it "should fail" do
-      (subject === [ ]).should == false
+      (subject === [ ]).should be_falsey
     end
     it "should fail" do
-      (subject === [ 1, :symbol, :wrong ]).should == false
+      (subject === [ 1, :symbol, :wrong ]).should be_falsey
     end
     it "should fail" do
-      (subject === [ 1, :symbol, "string", :too_many]).should == false
+      (subject === [ 1, :symbol, "string", :too_many]).should be_falsey
     end
   end
 
@@ -96,12 +96,12 @@ describe Class::CompositeType do
 
     it "should fail" do
       v = { "foo" => :symbol }
-      (subject === v).should == false
+      (subject === v).should be_falsey
     end
 
     it "should fail" do
       v = { :symbol => 2 }
-      (subject === v).should == false
+      (subject === v).should be_falsey
     end
   end
 
@@ -119,17 +119,17 @@ describe Class::CompositeType do
 
     it "should not fail when empty" do
       v = [ ]
-      (Array.of(String|Integer) === v).should === true
+      (Array.of(String|Integer) === v).should_not be_falsey
     end
 
     it "should not fail" do
       v = [ "String", 1234 ]
-      (Array.of(String|Integer) === v).should === true
+      (Array.of(String|Integer) === v).should_not be_falsey
     end
 
     it "should fail" do
       v = [ "String", 1234, :symbol ]
-      (Array.of(String|Integer) === v).should === false
+      (Array.of(String|Integer) === v).should be_falsey
     end
   end
 
@@ -137,12 +137,12 @@ describe Class::CompositeType do
     subject { Array.of(Positive & Integer) }
     it "should not fail when empty" do
       v = [ ]
-      (subject === v).should === true
+      (subject === v).should_not be_falsey
     end
 
     it "should not fail" do
       v = [ 1, 2 ]
-      (subject === v).should === true
+      (subject === v).should_not be_falsey
     end
 
     it "should fail" do
@@ -164,7 +164,7 @@ describe Class::CompositeType do
 
     it "should be true for match" do
       v = [ 1, :symbol ]
-      (Array.of(~NilClass) === v).should === true
+      (Array.of(~NilClass) === v).should_not be_falsey
     end
 
     it "should be false for match" do
@@ -176,34 +176,34 @@ describe Class::CompositeType do
   context "Positive" do
     it "should be true for Numeric" do
       v = 1234
-      (Positive === v).should == true
+      (Positive === v).should_not be_falsey
     end
 
     it "should be false for negative" do
       v = -1234
-      (Positive === v).should be_false
+      (Positive === v).should be_falsey
     end
 
     it "should be false for non-Numeric" do
       v = "a String"
-      (Positive === v).should be_false
+      (Positive === v).should be_falsey
     end
   end
 
   context "Negative" do
     it "should be true for negative Numeric" do
       v = -1234
-      (Negative === v).should == true
+      (Negative === v).should_not be_falsey
     end
 
     it "should be false for positive" do
       v = 1234
-      (Negative === v).should be_false
+      (Negative === v).should be_falsey
     end
 
     it "should be false for non-Numeric" do
       v = "a String"
-      (Negative === v).should be_false
+      (Negative === v).should be_falsey
     end
   end
 
@@ -215,7 +215,7 @@ describe Class::CompositeType do
 
     it "example 2" do
       h = { "a" => 1, "b" => "string" }
-      (Hash.of(String.with(Integer|Symbol)) === h).should == false
+      (Hash.of(String.with(Integer|Symbol)) === h).should be_falsey
     end
 
     it "should handle to_s" do
