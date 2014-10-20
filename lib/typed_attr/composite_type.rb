@@ -1,11 +1,19 @@
+require 'thread'
+
 class Module
   class CompositeType < self
     class Error < ::StandardError; end
 
-    CACHE = { }
     def self.new_cached *types
-      CACHE[[ self, types ]] ||= new(types)
+      key = [ self, types ]
+      (Thread.current[:'Module::CompositeType.cache'] ||= { })[key] ||=
+      CACHE_MUTEX.synchronize do
+        CACHE[key] ||= new(types)
+      end
     end
+    CACHE = { }
+    CACHE_MUTEX = Mutex.new
+
     def initialize types
       raise Error, "cannot create CompositeType from unamed object" unless types.all?{|x| x.name}
       @_t = types
