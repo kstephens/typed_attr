@@ -22,6 +22,13 @@ class Module
     def name; to_s; end
   end
 
+  # Matches nothing.
+  module Void
+    def === x
+      false
+    end
+  end
+
   class ContainerType < CompositeType
     def === x
       @_t[0] === x and x.all?{|e| @_t[1] === e }
