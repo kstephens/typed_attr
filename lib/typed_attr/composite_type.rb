@@ -31,7 +31,7 @@ class Module
     end
   end
 
-  # Constructs a type of Enumeration with an element type.
+  # Constructs a type of that matches an Enumerable with an element type.
   #
   # Array.of(String)
   def of t
@@ -94,7 +94,7 @@ class Module
 
   # Constructs a type which must be A AND B.
   #
-  # Array.of(Positive&Integer)
+  # Array.of(Positive & Integer)
   def & t
     ConjunctiveType.new_cached(self, t)
   end
@@ -110,7 +110,7 @@ class Module
 
   # Constructs a type which must not be A.
   #
-  # Array.of(~NilClass)
+  # Array.of(~ NilClass)
   def ~@
     case self
     when NegativeType

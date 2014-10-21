@@ -3,14 +3,14 @@ require 'typed_attr'
 
 describe Class::CompositeType do
   it "should cache instances" do
-    t1 = Array.of(String.with(~Float|Symbol&Hash))
-    t2 = Array.of(String.with(~Float|Symbol&Hash))
+    t1 = Array.of(String.with(~ Float | Symbol & Hash))
+    t2 = Array.of(String.with(~ Float | Symbol & Hash))
     t1.object_id.should == t2.object_id
   end
 
   it "should fail for anonymous Modules" do
     expect {
-      Module.new & String
+      Module.new | String
     }.to raise_error(Module::CompositeType::Error, "cannot create CompositeType from unamed object")
   end
 
@@ -119,17 +119,17 @@ describe Class::CompositeType do
 
     it "should not fail when empty" do
       v = [ ]
-      (Array.of(String|Integer) === v).should_not be_falsey
+      (Array.of(String | Integer) === v).should be_truthy
     end
 
     it "should not fail" do
       v = [ "String", 1234 ]
-      (Array.of(String|Integer) === v).should_not be_falsey
+      (Array.of(String | Integer) === v).should be_truthy
     end
 
     it "should fail" do
       v = [ "String", 1234, :symbol ]
-      (Array.of(String|Integer) === v).should be_falsey
+      (Array.of(String | Integer) === v).should be_falsey
     end
   end
 
@@ -137,22 +137,22 @@ describe Class::CompositeType do
     subject { Array.of(Positive & Integer) }
     it "should not fail when empty" do
       v = [ ]
-      (subject === v).should_not be_falsey
+      (subject === v).should be_truthy
     end
 
     it "should not fail" do
       v = [ 1, 2 ]
-      (subject === v).should_not be_falsey
+      (subject === v).should be_truthy
     end
 
     it "should fail" do
       v = [ 0, 1 ]
-      (subject === v).should === false
+      (subject === v).should be_falsey
     end
 
     it "should fail" do
       v = [ 1, :symbol ]
-      (subject === v).should === false
+      (subject === v).should be_falsey
     end
   end
 
@@ -164,19 +164,21 @@ describe Class::CompositeType do
 
     it "should be true for match" do
       v = [ 1, :symbol ]
-      (Array.of(~NilClass) === v).should_not be_falsey
+      (Array.of(~ NilClass) === v).should be_truthy
     end
 
     it "should be false for match" do
       v = [ 1, nil, :symbol ]
-      (Array.of(~NilClass) === v).should === false
+      ((~ NilClass) === 1)   .should be_truthy
+      ((~ NilClass) === nil) .should be_falsey
+      (Array.of(~ NilClass) === v).should be_falsey
     end
   end
 
   context "Positive" do
     it "should be true for Numeric" do
       v = 1234
-      (Positive === v).should_not be_falsey
+      (Positive === v).should be_truthy
     end
 
     it "should be false for negative" do
@@ -193,7 +195,7 @@ describe Class::CompositeType do
   context "Negative" do
     it "should be true for negative Numeric" do
       v = -1234
-      (Negative === v).should_not be_falsey
+      (Negative === v).should be_truthy
     end
 
     it "should be false for positive" do
@@ -210,16 +212,16 @@ describe Class::CompositeType do
   context "misc" do
     it "example 1" do
       h = { "a" => 1, "b" => :symbol }
-      typecheck h, Hash.of(String.with(Integer|Symbol))
+      typecheck h, Hash.of(String.with(Integer | Symbol))
     end
 
     it "example 2" do
       h = { "a" => 1, "b" => "string" }
-      (Hash.of(String.with(Integer|Symbol)) === h).should be_falsey
+      (Hash.of(String.with(Integer | Symbol)) === h).should be_falsey
     end
 
     it "should handle to_s" do
-      Hash.of(String.with(Integer|Symbol)).to_s.should == "Hash.of(String.with((Integer|Symbol)))"
+      Hash.of(String.with(Integer | Symbol)).to_s.should == "Hash.of(String.with((Integer|Symbol)))"
     end
 
   end
