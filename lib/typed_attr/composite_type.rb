@@ -135,31 +135,31 @@ module Numericlike
   end
 end
 
-# Objects that are Numericlike and > 0.
+# Objects that are > 0.
 module Positive
   def self.=== x
-    n = Numericlike === x and n > 0
+    x > 0 rescue nil
   end
 end
 
-# Objects that are Numericlike and < 0.
+# Objects that are < 0.
 module Negative
   def self.=== x
-    n = Numericlike === x and n < 0
+    x < 0 rescue nil
   end
 end
 
-# Objects that are Numericlike and <= 0.
+# Objects that are <= 0.
 module NonPositive
   def self.=== x
-    n = Numericlike === x and n <= 0
+    x <= 0 rescue nil
   end
 end
 
 # Objects that are Numericlike and >= 0.
 module NonNegative
   def self.=== x
-    n = Numericlike === x and n >= 0
+    x >= 0 rescue nil
   end
 end
 
