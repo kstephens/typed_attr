@@ -39,7 +39,7 @@ class Module
     end
 
     def >= t
-      self.equal?(t) or
+      super or
         t.is_a?(self.class) and @_t.zip(t._t).all?{|e1, e2| e1 >= e2 }
     end
 
@@ -66,7 +66,7 @@ class Module
     end
 
     def >= t
-      self.equal?(t) or
+      super or
         t.is_a?(self.class) and @_t.zip(t._t).all?{|e1, e2| e1 >= e2 }
     end
 
@@ -90,7 +90,7 @@ class Module
 
     def >= t
       case
-      when self.equal?(t)
+      when super
         true
       when t.is_a?(self.class)
         t._t.all?{|e2| @_t.any?{|e1| e1 >= e2}}
@@ -127,7 +127,7 @@ class Module
 
     def >= t
       case
-      when self.equal?(t)
+      when super
         true
       when t.is_a?(self.class)
         t._t.all?{|e2| @_t.all?{|e1| e1 >= e2}}
@@ -161,7 +161,7 @@ class Module
     end
 
     def >= t
-      t.is_a?(self.class) &&
+      t.is_a?(self.class) and
         t._t[0] >= @_t[0]
     end
 
