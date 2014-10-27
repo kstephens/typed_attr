@@ -14,7 +14,7 @@ describe Class::CompositeType do
     }.to raise_error(Module::CompositeType::Error, "cannot create CompositeType from unamed object")
   end
 
-  context "Numericlike" do
+  context Numericlike do
     subject { Numericlike }
     let(:numeric_like) do
       Class.new do
@@ -60,48 +60,38 @@ describe Class::CompositeType do
   context "ContainerType" do
     subject { Array.of(String) }
     it "should not fail when empty" do
-      typecheck [ ], subject
+      expect(subject === [ ]) .to be_truthy
     end
     it "should not fail with a matching element" do
-      typecheck [ "String" ], subject
+      expect(subject === [ "String" ]) .to be_truthy
     end
     it "should fail when contains unmatching element" do
-      expect do
-        typecheck [ "String", 1234 ], subject
-      end.to raise_error
+      expect(subject === [ "String", 1234 ]) .to be_falsey
     end
     it "should fail when is not an Enumerable" do
-      expect do
-        typecheck 1234, subject
-      end.to raise_error
+      expect(subject === 1234) .to be_falsey
     end
     it "should fail when is not equvalent" do
-      expect do
-        typecheck({ }, subject)
-      end.to raise_error
+      expect(subject === { }) .to be_falsey
     end
   end
 
   context "EnumeratedType" do
     subject { Hash.of(String.with(Integer)) }
     it "should not fail when empty" do
-      v = { }
-      typecheck v, subject
+      expect(subject === { }) .to be_truthy
     end
 
     it "should not fail" do
-      v = { "foo" => 1 }
-      typecheck v, subject
+      expect(subject === { "foo" => 1 }) .to be_truthy
     end
 
     it "should fail" do
-      v = { "foo" => :symbol }
-      expect(subject === v) .to be_falsey
+      expect(subject === { "foo" => :symbol }) .to be_falsey
     end
 
     it "should fail" do
-      v = { :symbol => 2 }
-      expect(subject === v) .to be_falsey
+      expect(subject === { :symbol => 2 }) .to be_falsey
     end
   end
 
@@ -234,9 +224,5 @@ describe Class::CompositeType do
       expect(Hash.of(String.with(Integer | Symbol)).to_s) .to eq("Hash.of(String.with((Integer|Symbol)))")
     end
 
-  end
-
-  def typecheck value, type
-    raise TypeError, "#{value.inspect} does not match #{type}" unless type === value
   end
 end
