@@ -1,42 +1,13 @@
-# TypedAttr
+# CompositeType
 
-Typed Attributes and Composite Types for Functional Programming in Ruby
+Composite Types for Ruby
 
 ## Usage
-
-TypedAttr simplifies typed functional programming in Ruby.
-
-The creation of data types is central to functional programming.
-Ruby does not enforce any typing of object attributes or method parameters.
-
-TypedAttr introduces a class macro "typed_attr".  It constructs an #initialize method
-given a list of attributes and their expected types.
-
-Example:
-
-    require 'typed_attr'
-    class Account
-      typed_attr name: String, amount: Money
-    end
-    Account.new("Foo", Money.new(1234))
-    Account.new("Foo", 1234) # => raise TypeError
-
-Use "typecheck" to perform checks on values:
-
-    def m x, y
-      typecheck x, String
-      typecheck y, Positive, Integer
-      x * y
-    end
-    m("string", -1) # => raise TypeError
-    m("string", 2)  # => "stringstring"
-
-The type assertions use the #=== matching operator.
 
 Composite Types can be constructed to match deeper data structures:
 
     h = { "a" => 1, "b" => :symbol }
-    typecheck h, Hash.of(String.with(Integer|Symbol))
+    Hash.of(String.with(Integer|Symbol)) === h  # => true
 
 Defining types through Modules:
 
@@ -58,22 +29,24 @@ Thus composite types can be used in "case when" clauses:
 Logical operators: #|, #&, #~ are supported:
 
     a = [ 1, 2, 3 ]
-    typecheck a, Array.of(Positive & Numeric)
-    typecheck a, Array.of(~ NilClass)
+    Array.of(Positive & Numeric) === a   # => true
+    Array.of(~ NilClass) === a           # => false
     
     b = [ 1, -2, 3 ]
-    typecheck b, Array.of(Positive & Numeric) # => raise TypeError
+    Array.of(Positive & Numeric) === b   # => false
     
     c = [ 1, nil, 3 ]
-    typecheck c, Array.of(~ NilClass)         # => raise TypeError
+    Array.of(~ NilClass) === c           # => false
 
 Composite types are cached indefinitely, therefore anonymous Modules cannot be composed.
+
+See spec/lib/composite_type_spec.rb for more examples.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-    gem 'typed_attr'
+    gem 'composite_type'
 
 And then execute:
 
@@ -81,7 +54,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install typed_attr
+    $ gem install composite_type
 
 ## Contributing
 
