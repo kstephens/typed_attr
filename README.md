@@ -13,7 +13,7 @@ Defining types through Modules:
 
     module Even
       def self.=== x
-         Integer === x and x.even?
+        Integer === x and x.even?
       end
     end
     Array.of(Even) === [ 2, 4, 10 ]
@@ -29,14 +29,17 @@ Thus composite types can be used in "case when" clauses:
 Logical operators: #|, #&, #~ are supported:
 
     a = [ 1, 2, 3 ]
-    Array.of(Positive & Numeric) === a   # => true
-    Array.of(~ NilClass) === a           # => false
+    Array.of(Positive & Integer) === a   # => true
+    Array.of(~ NilClass) === a           # => true
     
     b = [ 1, -2, 3 ]
-    Array.of(Positive & Numeric) === b   # => false
-    
-    c = [ 1, nil, 3 ]
-    Array.of(~ NilClass) === c           # => false
+    Array.of(Positive & Integer) === b   # => false
+
+    c = [ 1, 1.5, 3 ]
+    Array.of(Positive & Integer) === c   # => false
+
+    d = [ 1, nil, 3 ]
+    Array.of(~ NilClass) === d           # => false
 
 Composite types are cached indefinitely, therefore anonymous Modules cannot be composed.
 
