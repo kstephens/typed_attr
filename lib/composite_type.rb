@@ -23,9 +23,13 @@ class Module
   end
 
   # Matches nothing.
-  module Void
-    def === x
+  class Void
+    def self.=== x
       false
+    end
+
+    def >= t
+      self == t
     end
   end
 
@@ -33,6 +37,12 @@ class Module
     def === x
       @_t[0] === x and x.all?{|e| @_t[1] === e }
     end
+
+    def >= t
+      self.equal?(t) or
+        t.is_a?(self.class) and @_t.zip(t._t).all?{|e1, e2| e1 >= e2 }
+    end
+
     def to_s
       @to_s ||= "#{@_t[0]}.of(#{@_t[1]})".freeze
     end
@@ -54,6 +64,12 @@ class Module
           @_t.all?{|t| t === x[i += 1]}
         end
     end
+
+    def >= t
+      self.equal?(t) or
+        t.is_a?(self.class) and @_t.zip(t._t).all?{|e1, e2| e1 >= e2 }
+    end
+
     def to_s
       @to_s ||= "#{@_t[0]}.with(#{@_t[1..-1] * ','})".freeze
     end
@@ -61,8 +77,8 @@ class Module
 
   # Constructs a type of Enumerable elements.
   #
-  # String.with(Integer, Float) === [ "foo", 1, 1.2 ]
-  # Hash.of(String.with(Integer))
+  #   String.with(Integer, Float) === [ "foo", 1, 1.2 ]
+  #   Hash.of(String.with(Integer))
   def with *types
     EnumeratedType.new_cached(self, *types)
   end
@@ -71,6 +87,18 @@ class Module
     def === x
        @_t[0] === x or @_t[1] === x
     end
+
+    def >= t
+      case
+      when self.equal?(t)
+        true
+      when t.is_a?(self.class)
+        t._t.all?{|e2| @_t.any?{|e1| e1 >= e2}}
+      else
+        @_t.any?{|e1| e1 >= t}
+      end
+    end
+
     def to_s
       @to_s ||= "(#{@_t[0]}|#{@_t[1]})".freeze
     end
@@ -78,7 +106,7 @@ class Module
 
   # Constructs a type which can be A OR B.
   #
-  # Array.of(String|Integer)
+  #   Array.of(String|Integer)
   def | t
     case
     when t <= self
@@ -86,7 +114,9 @@ class Module
     when self <= t
       t
     else
-      DisjunctiveType.new_cached(self, t)
+      a, b = self, t
+      a, b = b, a if a.to_s > b.to_s
+      DisjunctiveType.new_cached(a, b)
     end
   end
 
@@ -94,6 +124,18 @@ class Module
     def === x
        @_t[0] === x and @_t[1] === x
     end
+
+    def >= t
+      case
+      when self.equal?(t)
+        true
+      when t.is_a?(self.class)
+        t._t.all?{|e2| @_t.all?{|e1| e1 >= e2}}
+      else
+        @_t.all?{|e1| e1 >= t}
+      end
+    end
+
     def to_s
       @to_s ||= "(#{@_t[0]}&#{@_t[1]})".freeze
     end
@@ -103,13 +145,26 @@ class Module
   #
   # Array.of(Positive & Integer)
   def & t
-    ConjunctiveType.new_cached(self, t)
+    case
+    when equal?(t)
+      self
+    else
+      a, b = self, t
+      a, b = b, a if a.to_s > b.to_s
+      ConjunctiveType.new_cached(a, b)
+    end
   end
 
   class NegativeType < CompositeType
     def === x
        ! (@_t[0] === x)
     end
+
+    def >= t
+      t.is_a?(self.class) &&
+        t._t[0] >= @_t[0]
+    end
+
     def to_s
       @to_s ||= "(~#{@_t[0]})".freeze
     end
