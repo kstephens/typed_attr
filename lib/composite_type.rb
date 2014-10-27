@@ -23,8 +23,8 @@ class Module
   end
 
   # Matches nothing.
-  class Void
-    def self.=== x
+  module VoidType
+    def === x
       false
     end
 
@@ -32,6 +32,7 @@ class Module
       self == t
     end
   end
+  Void = Class.new.extend(VoidType)
 
   class ContainerType < CompositeType
     def === x
