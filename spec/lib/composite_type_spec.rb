@@ -209,6 +209,28 @@ describe Class::CompositeType do
     end
   end
 
+  context "NonPositive" do
+    subject { NonPositive }
+    it "matches non-positive Numerics" do
+      (subject === -1).should be_truthy
+      (subject === -0.5).should be_truthy
+      (subject === 0).should be_truthy
+      (subject === 0.5).should be_falsey
+      (subject === 1).should be_falsey
+    end
+  end
+
+  context "NonNegative" do
+    subject { NonNegative }
+    it "matches non-negative Numerics" do
+      (subject === -1).should be_falsey
+      (subject === -0.5).should be_falsey
+      (subject === 0).should be_truthy
+      (subject === 0.5).should be_truthy
+      (subject === 1).should be_truthy
+    end
+  end
+
   context "misc" do
     it "example 1" do
       h = { "a" => 1, "b" => :symbol }
