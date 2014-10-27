@@ -5,7 +5,7 @@ describe Class::CompositeType do
   it "should cache instances" do
     t1 = Array.of(String.with(~ Float | Symbol & Hash))
     t2 = Array.of(String.with(~ Float | Symbol & Hash))
-    t1.object_id.should == t2.object_id
+    expect(t1.object_id) .to eql(t2.object_id)
   end
 
   it "should fail for anonymous Modules" do
@@ -25,35 +25,35 @@ describe Class::CompositeType do
     it "should be true for Numeric" do
       v = 1234
       x = subject === v
-      x.should == v
+      expect(x) .to eql(v)
     end
 
     it "should be true for anything that responds to :to_numeric" do
       v = numeric_like.new
       x = subject === v
-      x.should == -1234
+      expect(x) .to eql(-1234)
     end
 
     it "should be false for non-Numeric" do
       v = "a String"
-      v.respond_to?(:to_numeric).should be_falsey
-      (subject === v).should be_falsey
+      expect(v.respond_to?(:to_numeric)) .to be_falsey
+      expect(subject === v)              .to be_falsey
     end
   end
 
   context "EnumeratedType" do
     subject { Integer.with(Symbol, String) }
     it "should not fail" do
-      (subject === [ 1, :symbol, "string" ]).should == true
+      expect(subject === [ 1, :symbol, "string" ]) .to be_truthy
     end
     it "should fail" do
-      (subject === [ ]).should be_falsey
+      expect(subject === [ ]) .to be_falsey
     end
     it "should fail" do
-      (subject === [ 1, :symbol, :wrong ]).should be_falsey
+      expect(subject === [ 1, :symbol, :wrong ]) .to be_falsey
     end
     it "should fail" do
-      (subject === [ 1, :symbol, "string", :too_many]).should be_falsey
+      expect(subject === [ 1, :symbol, "string", :too_many]) .to be_falsey
     end
   end
 
@@ -96,40 +96,40 @@ describe Class::CompositeType do
 
     it "should fail" do
       v = { "foo" => :symbol }
-      (subject === v).should be_falsey
+      expect(subject === v) .to be_falsey
     end
 
     it "should fail" do
       v = { :symbol => 2 }
-      (subject === v).should be_falsey
+      expect(subject === v) .to be_falsey
     end
   end
 
   context "DisjunctiveType" do
     it "should reduce to the greater type if A or B are subclasses of each other" do
-      (Float   | Numeric).should == Numeric
-      (Numeric | Float  ).should == Numeric
-      (Numeric | Numeric).should == Numeric
+      expect(Float   | Numeric) .to equal(Numeric)
+      expect(Numeric | Float  ) .to equal(Numeric)
+      expect(Numeric | Numeric) .to equal(Numeric)
     end
 
     it "should not reduce if A and B are disjunctive" do
-      (Numericlike | Numeric).to_s.should == "(Numericlike|Numeric)"
-      (String | Array).to_s.should == "(String|Array)"
+      expect((Numericlike | Numeric).to_s) .to eq("(Numericlike|Numeric)")
+      expect((String | Array).to_s)        .to eq("(String|Array)")
     end
 
     it "should not fail when empty" do
       v = [ ]
-      (Array.of(String | Integer) === v).should be_truthy
+      expect(Array.of(String | Integer) === v) .to be_truthy
     end
 
     it "should not fail" do
       v = [ "String", 1234 ]
-      (Array.of(String | Integer) === v).should be_truthy
+      expect(Array.of(String | Integer) === v) .to be_truthy
     end
 
     it "should fail" do
       v = [ "String", 1234, :symbol ]
-      (Array.of(String | Integer) === v).should be_falsey
+      expect(Array.of(String | Integer) === v) .to be_falsey
     end
   end
 
@@ -137,101 +137,101 @@ describe Class::CompositeType do
     subject { Array.of(Positive & Integer) }
     it "should not fail when empty" do
       v = [ ]
-      (subject === v).should be_truthy
+      expect(subject === v) .to be_truthy
     end
 
     it "should not fail" do
       v = [ 1, 2 ]
-      (subject === v).should be_truthy
+      expect(subject === v) .to be_truthy
     end
 
     it "should fail" do
       v = [ 0, 1 ]
-      (subject === v).should be_falsey
+      expect(subject === v) .to be_falsey
     end
 
     it "should fail" do
       v = [ 1, :symbol ]
-      (subject === v).should be_falsey
+      expect(subject === v) .to be_falsey
     end
   end
 
   context "NegativeType" do
     it "~~A == A" do
       t = String
-      (~ ~ t).should == t
+      expect(~ ~ t) .to equal(t)
     end
 
     it "should be true for match" do
       v = [ 1, :symbol ]
-      (Array.of(~ NilClass) === v).should be_truthy
+      expect(Array.of(~ NilClass) === v) .to be_truthy
     end
 
     it "should be false for match" do
       v = [ 1, nil, :symbol ]
-      ((~ NilClass) === 1)   .should be_truthy
-      ((~ NilClass) === nil) .should be_falsey
-      (Array.of(~ NilClass) === v).should be_falsey
+      expect((~ NilClass) === 1)    .to be_truthy
+      expect((~ NilClass) === nil)  .to be_falsey
+      expect(Array.of(~ NilClass) === v) .to be_falsey
     end
   end
 
   context Negative do
     subject { Negative }
     it "matches non-positive Numerics" do
-      (subject === -1).should be_truthy
-      (subject === -0.5).should be_truthy
-      (subject === 0).should be_falsey
-      (subject === 0.5).should be_falsey
-      (subject === 1).should be_falsey
+      expect(subject === -1)   .to be_truthy
+      expect(subject === -0.5) .to be_truthy
+      expect(subject === 0)    .to be_falsey
+      expect(subject === 0.5)  .to be_falsey
+      expect(subject === 1)    .to be_falsey
     end
   end
 
   context Negative do
     subject { Negative }
     it "matches non-positive Numerics" do
-      (subject === -1).should be_truthy
-      (subject === -0.5).should be_truthy
-      (subject === 0).should be_falsey
-      (subject === 0.5).should be_falsey
-      (subject === 1).should be_falsey
+      expect(subject === -1)   .to be_truthy
+      expect(subject === -0.5) .to be_truthy
+      expect(subject === 0)    .to be_falsey
+      expect(subject === 0.5)  .to be_falsey
+      expect(subject === 1)    .to be_falsey
     end
   end
 
   context NonPositive do
     subject { NonPositive }
     it "matches non-positive Numerics" do
-      (subject === -1).should be_truthy
-      (subject === -0.5).should be_truthy
-      (subject === 0).should be_truthy
-      (subject === 0.5).should be_falsey
-      (subject === 1).should be_falsey
+      expect(subject === -1)   .to be_truthy
+      expect(subject === -0.5) .to be_truthy
+      expect(subject === 0)    .to be_truthy
+      expect(subject === 0.5)  .to be_falsey
+      expect(subject === 1)    .to be_falsey
     end
   end
 
   context NonNegative do
     subject { NonNegative }
     it "matches non-negative Numerics" do
-      (subject === -1).should be_falsey
-      (subject === -0.5).should be_falsey
-      (subject === 0).should be_truthy
-      (subject === 0.5).should be_truthy
-      (subject === 1).should be_truthy
+      expect(subject === -1)   .to be_falsey
+      expect(subject === -0.5) .to be_falsey
+      expect(subject === 0)    .to be_truthy
+      expect(subject === 0.5)  .to be_truthy
+      expect(subject === 1)    .to be_truthy
     end
   end
 
   context "misc" do
     it "example 1" do
       h = { "a" => 1, "b" => :symbol }
-      typecheck h, Hash.of(String.with(Integer | Symbol))
+      expect(Hash.of(String.with(Integer | Symbol)) === h) .to be_truthy
     end
 
     it "example 2" do
       h = { "a" => 1, "b" => "string" }
-      (Hash.of(String.with(Integer | Symbol)) === h).should be_falsey
+      expect(Hash.of(String.with(Integer | Symbol)) === h) .to be_falsey
     end
 
     it "should handle to_s" do
-      Hash.of(String.with(Integer | Symbol)).to_s.should == "Hash.of(String.with((Integer|Symbol)))"
+      expect(Hash.of(String.with(Integer | Symbol)).to_s) .to eq("Hash.of(String.with((Integer|Symbol)))")
     end
 
   end
