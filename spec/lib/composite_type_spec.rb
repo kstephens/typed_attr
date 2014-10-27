@@ -175,41 +175,29 @@ describe Class::CompositeType do
     end
   end
 
-  context "Positive" do
-    it "should be true for Numeric" do
-      v = 1234
-      (Positive === v).should be_truthy
-    end
-
-    it "should be false for negative" do
-      v = -1234
-      (Positive === v).should be_falsey
-    end
-
-    it "should be false for non-Numeric" do
-      v = "a String"
-      (Positive === v).should be_falsey
+  context Negative do
+    subject { Negative }
+    it "matches non-positive Numerics" do
+      (subject === -1).should be_truthy
+      (subject === -0.5).should be_truthy
+      (subject === 0).should be_falsey
+      (subject === 0.5).should be_falsey
+      (subject === 1).should be_falsey
     end
   end
 
-  context "Negative" do
-    it "should be true for negative Numeric" do
-      v = -1234
-      (Negative === v).should be_truthy
-    end
-
-    it "should be false for positive" do
-      v = 1234
-      (Negative === v).should be_falsey
-    end
-
-    it "should be false for non-Numeric" do
-      v = "a String"
-      (Negative === v).should be_falsey
+  context Negative do
+    subject { Negative }
+    it "matches non-positive Numerics" do
+      (subject === -1).should be_truthy
+      (subject === -0.5).should be_truthy
+      (subject === 0).should be_falsey
+      (subject === 0.5).should be_falsey
+      (subject === 1).should be_falsey
     end
   end
 
-  context "NonPositive" do
+  context NonPositive do
     subject { NonPositive }
     it "matches non-positive Numerics" do
       (subject === -1).should be_truthy
@@ -220,7 +208,7 @@ describe Class::CompositeType do
     end
   end
 
-  context "NonNegative" do
+  context NonNegative do
     subject { NonNegative }
     it "matches non-negative Numerics" do
       (subject === -1).should be_falsey
