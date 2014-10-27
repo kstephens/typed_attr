@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'typed_attr'
+require 'composite_type'
 
 describe Class::CompositeType do
   it "should cache instances" do
@@ -226,4 +226,7 @@ describe Class::CompositeType do
 
   end
 
+  def typecheck value, type
+    raise TypeError, "#{value.inspect} does not match #{type}" unless type === value
+  end
 end
