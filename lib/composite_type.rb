@@ -169,14 +169,24 @@ class Module
     def to_s
       @to_s ||= "(~#{@_t[0]})".freeze
     end
+
+    INVERSE_MAP = {
+    }
+    def self.inverse(a, b)
+      INVERSE_MAP[a] = b
+      INVERSE_MAP[b] = a
+    end
+    inverse(Object, Void)
   end
 
   # Constructs a type which must not be A.
   #
   # Array.of(~ NilClass)
   def ~@
-    case self
-    when NegativeType
+    case
+    when x = NegativeType::INVERSE_MAP[self]
+      x
+    when self.is_a?(NegativeType)
       self._t.first
     else
       NegativeType.new_cached(self)
@@ -217,6 +227,7 @@ module NonPositive
   def self.=== x
     x <= 0 rescue nil
   end
+  Module::NegativeType.inverse(self, Positive)
 end
 
 # Objects that are Numericlike and >= 0.
@@ -224,6 +235,7 @@ module NonNegative
   def self.=== x
     x >= 0 rescue nil
   end
+  Module::NegativeType.inverse(self, Negative)
 end
 
 # Objects that can do IO.

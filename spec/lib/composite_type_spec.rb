@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'composite_type'
 
-describe Class::CompositeType do
+describe Module::CompositeType do
   module A; end
   module B; end
   module C; include A; end
@@ -19,6 +19,20 @@ describe Class::CompositeType do
     expect {
       Module.new | String
     }.to raise_error(Module::CompositeType::Error, "cannot create CompositeType from unamed object")
+  end
+
+  context Module::Void do
+    subject { Module::Void }
+    it "does not match anything" do
+      expect(subject === Object.new) .to be_falsey
+    end
+    context "#>=" do
+      it "is disjoint from everything" do
+        expect( subject >= subject ) .to be_truthy
+        expect( Object  >= subject ) .to be_truthy
+        expect( subject >= Object  ) .to be_falsey
+      end
+    end
   end
 
   context Numericlike do
@@ -138,8 +152,14 @@ describe Class::CompositeType do
     end
 
     it "rewrites (~ (~ A)) => A" do
-      t = String
-      expect(~ ~ t) .to equal(t)
+      expect(~ ~ A) .to equal(A)
+    end
+
+    it "rewrites inverse types" do
+      expect(~ Object)       .to equal(Module::Void)
+      expect(~ Module::Void) .to equal(Object)
+      expect(~ Negative)     .to equal(NonNegative)
+      expect(~ NonNegative)  .to equal(Negative)
     end
   end
 
@@ -189,9 +209,6 @@ describe Class::CompositeType do
 
   context "#>=" do
     it "returns true where left side is a supertype of right side" do
-      expect( Object       >= Module::Void ) .to be_truthy
-      expect( Module::Void >= Object       ) .to be_falsey
-
       expect( Array.of(Object) >= Array.of(String) ) .to be_truthy
       expect( Array.of(String) >= Array.of(Object) ) .to be_falsey
       expect( Array.of(String) >= Object           ) .to be_falsey
